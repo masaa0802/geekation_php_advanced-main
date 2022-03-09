@@ -36,8 +36,8 @@ WHERE
 
 -- 問5
 -- 平均寿命が56歳から76歳の国をすべて抽出してください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     life_expectancy
 FROM
     `countries`
@@ -47,8 +47,8 @@ WHERE
 
 -- 問6
 -- 国コードがNLB,ALB,DZAのもの市区町村をすべて抽出してください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     country_code,
     district
 FROM
@@ -59,8 +59,8 @@ WHERE
 
 -- 問7
 -- 独立独立記念日がない国をすべて抽出してください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     indep_year
 FROM
     `countries`
@@ -70,8 +70,8 @@ WHERE
 
 -- 問8
 -- 独立独立記念日がある国をすべて抽出してください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     indep_year
 FROM
     `countries`
@@ -81,34 +81,37 @@ WHERE
 
 -- 問9
 -- 名前の末尾が「ia」で終わる国を抽出してください。
-SELECT NAME
+SELECT 
+    name
 FROM
     `countries`
-WHERE NAME LIKE
+WHERE name LIKE
     '%ia';
 
 
 -- 問10
 -- 名前の中に「st」が含まれる国を抽出してください。
-SELECT NAME
+SELECT 
+    name
 FROM
     `countries`
-WHERE NAME LIKE
+WHERE name LIKE
     '%st%';
 
 
 -- 問11
 -- 名前が「an」で始まる国を抽出してください。
-SELECT NAME
+SELECT 
+    name
 FROM
     `countries`
-WHERE NAME LIKE
+WHERE name LIKE
     'an%';
 
 -- 問12
 -- 全国の中から独立記念日が1990年より前または人口が10万人より多い国を全て抽出してください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     indep_year,
     population
 FROM
@@ -119,20 +122,20 @@ WHERE
 
 -- 問13
 -- コードがDZAもしくはALBかつ独立記念日が1990年より前の国を全て抽出してください。
-SELECT NAME
-    ,
-    CODE,
+SELECT 
+    name,
+    code,
     indep_year
 FROM
     `countries`
-WHERE CODE
-    = 'DZA' OR CODE = 'ALB' AND indep_year < 1990;
+WHERE 
+    code = 'DZA' OR code = 'ALB' AND indep_year < 1990;
 
 
 -- 問14
 -- 全ての地方をグループ化せずに表示してください。
-SELECT DISTINCT
-    (region)
+SELECT 
+    DISTINCT(region)
 FROM
     `countries`;
 
@@ -140,18 +143,15 @@ FROM
 -- 問15
 -- 国名と人口を以下のように表示させてください。シングルクォートに注意してください。
 -- 「Arubaの人口は103000人です」
-SELECT NAME
-    ,
-    'の人口は',
-    population,
-    '人です'
+SELECT 
+    CONCAT (name,'の人口は',population,'人です') 
 FROM
     `countries`;
 
 -- 問16
 -- 平均寿命が短い順に国名を表示させてください。ただしNULLは表示させないでください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     life_expectancy
 FROM
     `countries`
@@ -163,8 +163,8 @@ ORDER BY
 
 -- 問17
 -- 平均寿命が長い順に国名を表示させてください。ただしNULLは表示させないでください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     life_expectancy
 FROM
     `countries`
@@ -176,37 +176,33 @@ ORDER BY
 
 -- 問18
 -- 平均寿命が長い順、独立記念日が新しい順に国を表示させてください。
-SELECT NAME
-    ,
+SELECT 
+    name,
     life_expectancy,
     indep_year
 FROM
     `countries`
 ORDER BY
-    life_expectancy
-DESC
-    ,
-    indep_year ASC;
-
+    life_expectancy DESC, indep_year ASC;
 
 -- 問19
 -- 全ての国の国コードの一文字目と国名を表示させてください。
 SELECT
-    SUBSTRING(CODE, 1, 1),
-    NAME
+    SUBSTRING(code, 1, 1),
+    name
 FROM
     `countries`;
 
 
 -- 問20
 -- 国名が長いものから順に国名と国名の長さを出力してください。
-SELECT NAME
-    ,
-    LENGTH(NAME)
+SELECT 
+    name,
+    LENGTH(name)
 FROM
     `countries`
 ORDER BY
-    LENGTH(NAME)
+    LENGTH(name)
 DESC
     ;
 
@@ -263,7 +259,10 @@ SELECT
     countrylanguages.language
 FROM
     `countries`
-JOIN `countrylanguages` ON countries.code = countrylanguages.country_code;
+    JOIN
+        `countrylanguages`
+    ON  countries.code = countrylanguages.country_code
+;
 
 
 -- 問26
@@ -274,8 +273,13 @@ SELECT
     countrylanguages.language
 FROM
     `countries`
-JOIN `cities` ON countries.code = cities.country_code
-LEFT JOIN `countrylanguages` ON countries.code = countrylanguages.country_code;
+    JOIN
+        `cities`
+    ON  countries.code = cities.country_code
+    LEFT JOIN
+        `countrylanguages`
+    ON  countries.code = countrylanguages.country_code
+;
 
 
 -- 問27
@@ -285,7 +289,10 @@ SELECT
     countries.name
 FROM
     `celebrities`
-LEFT JOIN `countries` ON celebrities.country_code = countries.code;
+    LEFT JOIN
+        `countries`
+    ON  celebrities.country_code = countries.code
+;
 
 -- 問28
 -- 全ての有名人の名前,国名、第一言語を出力してください。
@@ -295,10 +302,15 @@ SELECT
     countrylanguages.language
 FROM
     `celebrities`
-JOIN `countries` ON celebrities.country_code = countries.code
-LEFT JOIN `countrylanguages` ON celebrities.country_code = countrylanguages.country_code
+    JOIN
+        `countries`
+    ON  celebrities.country_code = countries.code
+    LEFT JOIN
+        `countrylanguages`
+    ON  celebrities.country_code = countrylanguages.country_code
 WHERE
-    countrylanguages.is_official = TRUE;
+    countrylanguages.is_official = TRUE
+;
 
 
 -- 問29
@@ -353,15 +365,15 @@ SELECT
     AVG(celebrities.age) AS '平均年齢'
 FROM
     `countries`
-RIGHT JOIN `celebrities` ON countries.code = celebrities.country_code
+    RIGHT JOIN
+        `celebrities`
+    ON  countries.code = celebrities.country_code
 WHERE
     countries.name IS NOT NULL
 GROUP BY
     countries.name
 ORDER BY
-    `平均年齢`
-DESC
-    
+    `平均年齢` DESC
 
 
 
