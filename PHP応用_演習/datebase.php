@@ -1,9 +1,10 @@
 <?php
 
 try {
+	$dbh->beginTransaction();
 	// DBへ接続
-  $dbh = new PDO("mysql:host=127.0.0.1;port=3306;dbname = casteria'; charset=utf8");
-	$user = 'root';
+  $dbh = new PDO("mysql:host=127.0.0.1;port=3306;dbname = casteria; charset=utf8");
+	$username = 'root';
 	$password = '';
 	// SQL作成
 	$sql = 'CREATE TABLE contacts (
@@ -19,11 +20,12 @@ try {
 
 	// SQL実行
 	$res = $dbh->query($sql);
-
+	$dbh->commit();
 } catch(PDOException $e) {
 
 	echo $e->getMessage();
 	die();
+	$dbh->rollBack();
 }
 
 // 接続を閉じる
