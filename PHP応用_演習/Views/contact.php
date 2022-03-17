@@ -1,60 +1,18 @@
 <?php
-// 使用する変数を初期化
-$name = '';
-$kana = '';
-$tel= '';
-$email = '';
-$body = '';
-$page_flag = 0;
-
-if(!empty($_POST['btn_confirm']) ) {
-$errors = validation();
-  if(empty($errors) ) {
-    $page_flag = 1;
-  } 
-} elseif (!empty($_POST['btn_submit'])) {
-  $page_flag = 2;
-}
-
-function validation(){
-  // エラー内容
-  $errors = [];
-  // 送信データをチェック
-  if (isset($_POST)) {
-      // 氏名
-      if (empty($_POST['name'])) {
-          $errors['name'] = '氏名は必須項目です。';
-      }
-      // フリガナ
-      if (empty($_POST['kana'])) {
-          $errors['kana'] = 'フリガナは必須項目です。';
-      }
-      // 電話番号
-      if (preg_match('/^[0-9]+$/', $_POST['tel']) === 0) {
-          $errors['tel'] = '正しい電話番号を入力してください。';
-      }
-      // メールアドレス
-      if (empty($_POST['email'])) {
-          $errors['email'] = 'メールアドレスは必須項目です。';
-      } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-          $errors['email'] = '正しいEメールアドレスを指定してください。';
-      }
-      // お問い合わせ内容
-      if (empty($_POST['body'])) {
-          $errors['body'] = 'お問い合わせ内容は必須項目です。';
-      } 
-  }
-  return $errors;
-}
+require_once(ROOT_PATH .'Models/ContactModel.php');
+require_once(ROOT_PATH .'Controllers/ContactController.php');
 ?>
- 
-<!DOCTYPE html>
+
+ <!DOCTYPE html>
 <html lang="ja">
   <head>
       <title>お問い合わせフォーム</title>
       <link rel="stylesheet" href="css/style.css">
   </head>
 <body>
+
+<!-- -------------------------------------確認画面------------------------------------ -->
+
 <?php if( $page_flag === 1 ): ?>
   <h1> 確認画面</h1>
   <form action= "" method="post">
@@ -81,7 +39,7 @@ function validation(){
     <!-- お問い合わせ内容 -->
     <div class="element_wrap_p">
       <label for="body">*お問い合わせ内容</label><br>
-      <p><?php echo $_POST['body']; ?></p>
+      <p><?php echo nl2br($_POST['body']); ?></p>
     </div>
     <input type="submit" name="btn_back" value="キャンセル">
     <input type="submit" name="btn_submit" value="送信">
@@ -92,11 +50,15 @@ function validation(){
     <input type="hidden" name="body" value="<?php echo $_POST['body']; ?>">
   </form>
 
+  <!-- -------------------------------------完了画面------------------------------------- -->
+
 <?php elseif( $page_flag === 2 ): ?>
 <h1>完了画面</h1>
 <p>お問い合わせ内容を送信しました。<br>
 ありがとうございました。</p>
+<a href="contact.php">トップへ</a>
 
+<!-- -------------------------------------入力画面------------------------------------- -->
 <?php else: ?>
 <h1> 入力画面</h1>
   <p>* は必須項目です</p>
@@ -112,25 +74,25 @@ function validation(){
         <!-- 氏名  -->
         <div class="element_wrap">
           <label for="name">*氏名</label>
-          <input type="varchar" name="name" id="name" placeholder="例）入力太郎"
+          <input type="text" name="name" id="name" placeholder="例）入力太郎"
           value="<?php if( !empty($_POST['name']) ){ echo $_POST['name']; } ?>"><br>
         </div>
         <!-- フリガナ -->
         <div class="element_wrap">
           <label for="kana">*フリガナ</label>
-          <input type="varchar" name="kana" id="kana" placeholder="例）ニュウリョクタロウ"
+          <input type="text" name="kana" id="kana" placeholder="例）ニュウリョクタロウ"
           value="<?php if( !empty($_POST['kana']) ){ echo $_POST['kana']; } ?>"><br>
         </div>
         <!-- 電話番号 -->
         <div class="element_wrap">
           <label for="tel">電話番号</label>
-          <input type="varchar" name="tel" id="tel" placeholder="例）08011112222"
+          <input type="text" name="tel" id="tel" placeholder="例）08011112222"
           value="<?php if( !empty($_POST['tel']) ){ echo $_POST['tel']; } ?>"><br>
         </div>
         <!-- メールアドレス -->
         <div class="element_wrap">
           <label for="email">*メールアドレス</label>
-          <input type="varchar" name="email" id="email" placeholder="例）nyuuryoku11@mail.com"
+          <input type="text" name="email" id="email" placeholder="例）nyuuryoku11@mail.com"
           value="<?php if( !empty($_POST['email']) ){ echo $_POST['email']; } ?>"><br>
         </div>
         <!-- お問い合わせ内容 -->
@@ -141,6 +103,33 @@ function validation(){
         <input name = "btn_confirm" type="submit" value="入力内容を確認する">
         </div>
     </form>
+    <!-- -------------------------------------(入力画面)お問い合わせ内容詳細------------------------------------- -->
+    <!-- <#?php  require_once(ROOT_PATH .'Models/delete.php'); ?> -->
+    <form action="" method="post">
+    <table>
+      <th>氏名</th>
+      <th>フリガナ</th>
+      <th>電話番号</th>
+      <th>メールアドレス</th>
+      <th>お問い合わせ内容</th>
+      <th></th>
+      <th></th>
+      <?php if( !empty($message_array) ){ ?>
+      <?php foreach( $message_array as $value ){ ?>
+      <tr>
+      <td><p><?php  echo $value['name']; ?></p></td>
+      <td><p><?php  echo $value['kana']; ?></p></td>
+      <td><p><?php  echo $value['tel'];  ?></p></td>
+      <td><p><?php  echo $value['email'];  ?></p></td>
+      <td><p><?php  echo nl2br($value['body']);  ?></p></td>
+      <td><a href="edit.php?message_id=<?php echo $value['id']; ?>" name="edit">編集</a></td>
+      <td><a href="delete.php?message_id=<?php echo $value['id']; ?>" onclick="return confirm('本当に削除しますか？')" name="delete">削除</a></td>
+      </tr>
+      <?php } ?>
+      <?php } ?>
+    </table>
+  </form>
   <?php endif; ?>
   </body>
 </html>
+

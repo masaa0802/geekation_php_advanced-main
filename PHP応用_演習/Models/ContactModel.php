@@ -1,41 +1,54 @@
-<?php
-session_start();
-​
-// (1) 登録するデータを用意
-$name = $_POST['name'];
-$kana = $_POST['kana'];
-$tel = $_POST['tel'];
-$email = $_POST['email'];
-$body = $_POST['body'];
-​
-// (2) データベースに接続
-$dsn = 'mysql: dbname=casteria; host = 127.0.0.1';
-$user = 'root';
-$password = '';
-$pdo = new PDO($dsn, $user, $password);
-​
-// DB接続チェック
-try {
-    $dbh = new PDO($dsn, $user, $password);
-    echo '接続成功' . '<br><br>';
-} catch (PDOException $e) {
-    echo "接続失敗: " . $e->getMessage() . "\n";
-    exit();
+<?php 
+require_once(ROOT_PATH .'Models/Db.php');
 
-​
-// (3) SQL作成
-$stmt = $pdo->prepare("INSERT INTO contacts (name, kana, tel, email, body) VALUES (:name, :kana, :tel, :email, :body)");
-​
-// (4) 登録するデータをセット
-$stmt->bindValue(':name', $name, PDO::PARAM_STR);
-$stmt->bindValue(':kana', $kana, PDO::PARAM_STR);
-$stmt->bindValue(':tel', $tel, PDO::PARAM_STR);
-$stmt->bindValue(':email', $email, PDO::PARAM_STR);
-$stmt->bindValue(':body', $body, PDO::PARAM_STR);
-​
-// (5) SQL実行
-$stmt->execute();
-​}
-// (6) データベースの接続解除
+if( !empty($_POST['btn_submit']) ) {
+  $name = $_POST['name'];
+  $kana = $_POST['kana'];
+  $tel= $_POST['tel'];
+  $email = $_POST['email'];
+  $body = $_POST['body'];
+
+  if( empty($error_message) ) {
+
+  // トランザクション開始
+  $pdo->beginTransaction();
+
+  try {
+      // SQL作成
+      $stmt = $pdo->prepare("INSERT INTO contacts (name, kana, tel, email, body) VALUES (:name, :kana, :tel, :email, :body)");
+
+      // 値をセット
+      $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+      $stmt->bindValue(':kana', $kana, PDO::PARAM_STR);
+      $stmt->bindValue(':tel', $tel, PDO::PARAM_STR);
+      $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+      $stmt->bindValue(':body', $body, PDO::PARAM_STR);
+
+      // SQLクエリの実行
+      $res = $stmt->execute();
+
+      // コミット
+      $res = $pdo->commit();
+
+  } catch(Exception $e) {
+
+      // エラーが発生した時はロールバック
+      $pdo->rollBack();
+      echo $e;
+  }
+
+  // プリペアドステートメントを削除
+  $stmt = null;
+  }
+}
+
+if( empty($error_message) ) {
+
+	// メッセージのデータを取得する
+	$sql = "SELECT * FROM contacts ORDER BY created_at DESC";
+	$message_array = $pdo->query($sql);
+}
+
+// データベースの接続を閉じる
 $pdo = null;
 ?>

@@ -130,7 +130,7 @@
     border-bottom: 1px solid #999;
   }
 
-  input[type="varchar"] {
+  input[type="text"] {
     padding: 5px 30px;
     margin: 10px;
     font-size: 86%;
@@ -157,6 +157,20 @@
     margin-right: 20px;
     box-shadow: 0 3px 0 #777;
     background: #999;
+  }
+
+  a.btn_cancel{
+    margin-top: 10px;
+    margin-right: 20px;
+    padding: 5px 20px;
+    font-size: 100%;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0 3px 0 #777;
+    background: #999;
+
   }
   textarea[name="body"] {
     width: 350px;
@@ -197,7 +211,48 @@
     margin-bottom: 10px;
     border-bottom: 1px solid #ccc;
   }
-
+  /*お問い合わせ内容詳細*/
+  table{
+    margin: 50px;
+    width: 60%;
+    text-align: center;
+    display: inline-table;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  
+  th,table td{
+    padding: 10px 0;
+    text-align: center;
+  }
+  
+  table tr:nth-child(odd){
+    background-color: #eee
+  }
+  a[name="edit"] {
+    margin-top: 10px;
+    padding: 5px 20px;
+    font-size: 100%;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0 3px 0 #01a001;
+    background: #02be02;
+  }
+  a[name="delete"] {
+    margin-top: 10px;
+    padding: 5px 20px;
+    font-size: 100%;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0 3px 0 #a70202;
+    background: #e70404;
+  }
   /* アコーディオンメニュー全体のサイズ・位置 */
   .ac {
     width: 100%;

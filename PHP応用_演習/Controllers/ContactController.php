@@ -1,34 +1,46 @@
-<?php
-require_once(ROOT_PATH .'Models/ContactModel.php');
-
-class ContactController
-{
-  private $view;    
-  private $model;
- 
-  public function __construct()
-  {        
-    // ビューオブジェクト生成        
-    $this->view = new Smarty();        
-    $this->view->template_dir = '../Views/contact.php';        
-    // モデルオブジェクト生成        
-    $this->model = new ContactModel();    
-  } 
- 
-  public function displayProc()    
-  {         
-    $req = new Request();        
-    $params = $req->getParam();        
-    $name = $params['name']; 
-    $kana = $params['kana']; 
-    $tel = $params['tel']; 
-    $email = $params['email']; 
-    $body = $params['body']; 
-    // 情報を取得        
-    $basicdata = $this->model->getBasicData($name,$kana,$tel,$email,$body);         
-    // ビュー内の smarty変数に値を割り当てる        
-    $this->view->assign('basic_data', $basicdata);          
-    // 表示        
-    $this->view->display('Views/contact.php');    
-  } 
+<?php 
+function validation(){
+  // エラー内容
+  $errors = [];
+  // 送信データをチェック
+  if (isset($_POST)) {
+      // 氏名
+      if (empty($_POST['name'])) {
+          $errors['name'] = '氏名は必須項目です。';
+      }
+      // フリガナ
+      if (empty($_POST['kana'])) {
+          $errors['kana'] = 'フリガナは必須項目です。';
+      }
+      // 電話番号
+      if (preg_match('/^[0-9]+$/', $_POST['tel']) === 0) {
+          $errors['tel'] = '正しい電話番号を入力してください。';
+      }
+      // メールアドレス
+      if (empty($_POST['email'])) {
+          $errors['email'] = 'メールアドレスは必須項目です。';
+      } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+          $errors['email'] = '正しいEメールアドレスを指定してください。';
+      }
+      // お問い合わせ内容
+      if (empty($_POST['body'])) {
+          $errors['body'] = 'お問い合わせ内容は必須項目です。';
+      } 
+  }
+  return $errors;
 }
+
+$page_flag = 0;
+
+if(!empty($_POST['btn_confirm']) ) {
+$errors = validation();
+  if(empty($errors) ) {
+    $page_flag = 1;
+  } 
+} elseif (!empty($_POST['btn_submit'])) {
+  $page_flag = 2;
+}
+//  elseif (!empty($_POST['btn_delete'])) {
+//   $page_flag = 0;
+// }
+
