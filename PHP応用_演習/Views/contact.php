@@ -3,7 +3,19 @@
   // idのデータがPOSTされた場合の処理
   if (!empty($_POST['id'])) {
     // DBの該当行を削除
-    $controller->deleteController($_POST['id']);
+    $controller->deleteData($_POST['id']);
+  }
+
+
+  $page_flag = 0;
+
+  if (!empty($_POST['btn_confirm'])){
+  $errors = $controller->validation();
+    if (empty($errors)) {
+      $page_flag = 1;
+    } 
+  } elseif (!empty($_POST['btn_submit'])){
+    $page_flag = 2;
   }
 ?>
 
@@ -15,7 +27,7 @@
   </head>
 <body>
 <!-- -------------------------------------確認画面------------------------------------ -->
-<?php if( $page_flag === 1 ): ?>
+<?php if($page_flag === 1): ?>
   <?php  
       if($_POST["btn_confirm"]){
       // 登録するデータを用意
@@ -25,7 +37,7 @@
       $email = $_POST['email'];
       $body = $_POST['body'];
       // DBに登録
-      $controller->insertController($name, $kana, $tel, $email, $body);
+      $controller->insertData($name, $kana, $tel, $email, $body);
       }
   ?>
   <h1> 確認画面</h1>
@@ -66,7 +78,7 @@
 
   <!-- -------------------------------------完了画面------------------------------------- -->
 
-<?php elseif( $page_flag === 2 ): ?>
+<?php elseif($page_flag === 2): ?>
 <h1>完了画面</h1>
 <p>お問い合わせ内容を送信しました。<br>
 ありがとうございました。</p>
@@ -127,8 +139,8 @@
         <th>お問い合わせ内容</th>
         <th></th>
         <th></th>
-        <?php $message_array = $controller->selectController(); ?>
-        <?php foreach( $message_array as $value ){ ?>
+        <?php $message_array = $controller->createData();?>
+        <?php foreach( $message_array as $value ){?>
         <tr>
         <td><p><?php echo $value->name; ?></p></td>
         <td><p><?php echo $value->kana; ?></p></td>
@@ -139,7 +151,7 @@
         <td><input type="submit" name="delete" value="削除" onclick="return confirm('本当に削除しますか？')">
             <input type="hidden" name="id" value="<?php echo $value->id ;?>"></td>
         </tr>
-        <?php } ?>
+        <?php }?>
       </table>
     </form>
   <?php endif; ?>

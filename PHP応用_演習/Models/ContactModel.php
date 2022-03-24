@@ -20,7 +20,7 @@ class Model {
       $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
   }
 
-  public function select(){
+  public function creteData(){
     try {
       // トランザクション開始
       $this->pdo->beginTransaction();
@@ -44,7 +44,7 @@ class Model {
     }
   }
 
-  public function insert($name, $kana, $tel, $email, $body){       
+  public function insertData($name, $kana, $tel, $email, $body){       
     try {
         // トランザクション開始
         $this->pdo->beginTransaction();
@@ -77,7 +77,7 @@ class Model {
     $stmt = null;
   }
 
-  public function update($id, $name, $kana, $tel, $email, $body){
+  public function updateData($id, $name, $kana, $tel, $email, $body){
     try {
         // トランザクション開始
         $this->pdo->beginTransaction();
@@ -108,7 +108,7 @@ class Model {
         echo $e;
     }
     // 更新に成功したら一覧に戻る
-    if($res) {
+    if ($res) {
       header("Location: ./contact.php");
       exit;
     }
@@ -117,7 +117,7 @@ class Model {
   }
   
 
-  public function edit($id){  
+  public function editData($id){  
 
     try{
       // トランザクション開始
@@ -143,7 +143,7 @@ class Model {
     return $stmt->fetch();
   }
 
-  public function delete($id){
+  public function deleteData($id){
 
     try {
       // トランザクション開始
@@ -170,7 +170,7 @@ class Model {
     }
 
     // 削除に成功したら一覧に戻る
-    if($res) {
+    if ($res) {
       header("Location: contact.php");
       exit;
     }
