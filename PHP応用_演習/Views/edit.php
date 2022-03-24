@@ -1,5 +1,5 @@
 <?php 
-require_once(ROOT_PATH .'Models/ContactModel.php');
+require_once(ROOT_PATH .'Controllers/ContactController.php');
 ?>
 
 <!DOCTYPE html>
@@ -12,14 +12,36 @@ require_once(ROOT_PATH .'Models/ContactModel.php');
 
   <h1> 詳細画面 </h1>
     <p>* は必須項目です</p>
-      <?php if(!empty($errors) ): ?>
+      <?php if(!empty($errors2) ): ?>
         <ul class="error_list">
-        <?php foreach( $errors as $value ): ?>
+        <?php foreach( $errors2 as $value ): ?>
           <li><?php echo $value; ?></li>
         <?php endforeach; ?>
         </ul>
       <?php endif; ?>
       <form action= "" method="post">
+      <?php
+        // GETパラメータの$idがあり、POSTデータがない場合、データを表示する
+        if (!empty($_GET['id'])&& empty($_POST['id'])) {
+            $message_data = $controller->editController($_GET['id']);
+        // POSTがある場合（入力されたデータが送信された場合）
+        }elseif (!empty($_POST)) {
+            // 登録するデータを用意
+            $id = $_POST['id'];
+            $name = $_POST['name'];
+            $kana = $_POST['kana'];
+            $tel = $_POST['tel'];
+            $email = $_POST['email'];
+            $body = $_POST['body'];
+            // DBを更新する
+            $controller->updateController($id, $name, $kana, $tel, $email, $body);
+        }// GETパラメータの$idが空で、POSTデータがない場合、contact.phpにリダイレクト
+          // 不正アクセスの防止
+          elseif (empty($_GET['id'] && empty($_POST))) {
+            header("Location: contact.php");
+            exit;
+        }
+      ?>
         <div class="row">
           <!-- 氏名  -->
           <div class="element_wrap">
@@ -62,7 +84,7 @@ require_once(ROOT_PATH .'Models/ContactModel.php');
           </div>
           <a class="btn_cancel" href="contact.php">キャンセル</a>
           <input name = "btn_update" type="submit" value="更新">
-          <input type="hidden" name="edit_id" value="<?php if( !empty($message_data['id']) ){ echo $message_data['id']; } ?>">
+          <input type="hidden" name="id" value="<?php if( !empty($message_data['id']) ){ echo $message_data['id']; } ?>">
         </div>
       </form>
   </body>

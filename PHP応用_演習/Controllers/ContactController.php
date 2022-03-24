@@ -32,7 +32,7 @@ function validation(){
 
 $page_flag = 0;
 
-if(!empty($_POST['btn_confirm']) ) {
+if(!empty($_POST['btn_confirm'])){
 $errors = validation();
   if(empty($errors) ) {
     $page_flag = 1;
@@ -45,59 +45,33 @@ $errors = validation();
 
 require_once(ROOT_PATH .'Models/ContactModel.php');
 
+$controller = new ContactController();
+
 class ContactController {
-    private $request;   // リクエストパラメータ(GET,POST)
-    private $Model;    // モデルオブジェクト生成
+  private $model;
 
-    public function __construct() {
-        // リクエストパラメータの取得
-        $this->request['get'] = $_GET;
-        $this->request['post'] = $_POST;  
+  public function __construct(){
+      $this->model = new Model();
+  }
 
-        // モデルオブジェクトの生成
-        $this->Model = new Model();
+  public function selectController(){
+      return $this->model->select();
+  }
 
-        // 別モデルと連携
-        $dbh = $this->Model->get_db_handler();
-    }
+  public function insertController($name, $kana, $tel, $email, $body){
+      return $this->model->insert($name, $kana, $tel, $email, $body);
+  }
 
-    public function insertController(){
-      if(!empty($_POST['btn_submit'])){
-        if(isset($this->request['post']['name'])) {
-          $name = $this->request['post']['name'];
-        }if(isset($this->request['post']['kana'])) {
-          $kana = $this->request['post']['kana'];
-        }if(isset($this->request['post']['tel'])) {
-          $tel = $this->request['post']['tel'];
-        }if(isset($this->request['post']['email'])) {
-          $email = $this->request['post']['email'];
-        }if(isset($this->request['post']['body'])) {
-          $body = $this->request['post']['body'];
-        }
-      }
-      $insert = $this->Model->insert();
-      $params = [
-          'insert' => $insert,
-          'name' => $name,
-          'kana' => $kana,
-          'tel' => $tel,
-          'email' => $email,
-          'body' => $body,
-      ];
-      return $params;
-    }
+  public function updateController($id, $name, $kana, $tel, $email, $body){
+      return $this->model->update($id, $name, $kana, $tel, $email, $body);
+  }
 
-    public function selectController() {
-      if(isset($this->request['get']['id'])) {
-          $id = $this->request['get']['id'];
-      }
+  public function editController($id){
+      return $this->model->edit($id);
+  }
 
-      $select = $this->Contact->select();
-      $params = [
-          'select' => $select,
-          'id' => $id,
-      ];
-      return $params;
+  public function deleteController($id){
+      return $this->model->delete($id);
   }
 }
        

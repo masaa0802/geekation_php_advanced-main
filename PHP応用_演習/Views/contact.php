@@ -1,18 +1,33 @@
 <?php
-require_once(ROOT_PATH .'Controllers/ContactController.php');
+  require_once(ROOT_PATH .'Controllers/ContactController.php');
+  // idのデータがPOSTされた場合の処理
+  if (!empty($_POST['id'])) {
+    // DBの該当行を削除
+    $controller->deleteController($_POST['id']);
+  }
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
   <head>
     <title>お問い合わせフォーム</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css"> 
   </head>
 <body>
-
 <!-- -------------------------------------確認画面------------------------------------ -->
-
 <?php if( $page_flag === 1 ): ?>
+  <?php  
+      if($_POST["btn_confirm"]){
+      // 登録するデータを用意
+      $name = $_POST['name'];
+      $kana = $_POST['kana'];
+      $tel = $_POST['tel'];
+      $email = $_POST['email'];
+      $body = $_POST['body'];
+      // DBに登録
+      $controller->insertController($name, $kana, $tel, $email, $body);
+      }
+  ?>
   <h1> 確認画面</h1>
   <form action= "" method="post">
     <!-- 氏名  -->
@@ -104,30 +119,29 @@ require_once(ROOT_PATH .'Controllers/ContactController.php');
     </form>
     <!-- -------------------------------------(入力画面)お問い合わせ内容詳細------------------------------------- -->
     <form action="" method="post">
-    <table>
-      <th>氏名</th>
-      <th>フリガナ</th>
-      <th>電話番号</th>
-      <th>メールアドレス</th>
-      <th>お問い合わせ内容</th>
-      <th></th>
-      <th></th>
-      <?php if( !empty($message_array) ){ ?>
-      <?php foreach( $message_array as $value ){ ?>
-      <tr>
-      <td><p><?php  echo $value['name']; ?></p></td>
-      <td><p><?php  echo $value['kana']; ?></p></td>
-      <td><p><?php  echo $value['tel'];  ?></p></td>
-      <td><p><?php  echo $value['email'];  ?></p></td>
-      <td><p><?php  echo nl2br($value['body']);  ?></p></td>
-      <td><a href="edit.php?edit_id=<?php echo $value['id']; ?>" name="edit">編集</a></td>
-      <td><input type="submit" name="delete" value="削除" onclick="return confirm('本当に削除しますか？')">
-          <input type="hidden" name="delete" value="<?php echo $value['id']; ?>"></td>
-      </tr>
-      <?php } ?>
-      <?php } ?>
-    </table>
-  </form>
+      <table>
+        <th>氏名</th>
+        <th>フリガナ</th>
+        <th>電話番号</th>
+        <th>メールアドレス</th>
+        <th>お問い合わせ内容</th>
+        <th></th>
+        <th></th>
+        <?php $message_array = $controller->selectController(); ?>
+        <?php foreach( $message_array as $value ){ ?>
+        <tr>
+        <td><p><?php echo $value->name; ?></p></td>
+        <td><p><?php echo $value->kana; ?></p></td>
+        <td><p><?php echo $value->tel;  ?></p></td>
+        <td><p><?php echo $value->email;  ?></p></td>
+        <td><p><?php echo nl2br($value->body);  ?></p></td>
+        <td><a href="edit.php?id=<?php echo $value->id ;?>" name="edit">編集</a></td>
+        <td><input type="submit" name="delete" value="削除" onclick="return confirm('本当に削除しますか？')">
+            <input type="hidden" name="id" value="<?php echo $value->id ;?>"></td>
+        </tr>
+        <?php } ?>
+      </table>
+    </form>
   <?php endif; ?>
   </body>
 </html>

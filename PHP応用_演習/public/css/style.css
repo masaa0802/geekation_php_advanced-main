@@ -141,6 +141,7 @@
 
   input[name="btn_confirm"],
   input[name="btn_submit"],
+  input[name="btn_update"],
   input[name="btn_back"] {
     margin-top: 10px;
     padding: 5px 20px;
