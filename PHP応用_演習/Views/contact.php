@@ -1,13 +1,12 @@
 <?php
-require_once(ROOT_PATH .'Models/ContactModel.php');
 require_once(ROOT_PATH .'Controllers/ContactController.php');
 ?>
 
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
   <head>
-      <title>お問い合わせフォーム</title>
-      <link rel="stylesheet" href="css/style.css">
+    <title>お問い合わせフォーム</title>
+    <link rel="stylesheet" href="css/style.css">
   </head>
 <body>
 
@@ -104,7 +103,6 @@ require_once(ROOT_PATH .'Controllers/ContactController.php');
         </div>
     </form>
     <!-- -------------------------------------(入力画面)お問い合わせ内容詳細------------------------------------- -->
-    <!-- <#?php  require_once(ROOT_PATH .'Models/delete.php'); ?> -->
     <form action="" method="post">
     <table>
       <th>氏名</th>
@@ -122,8 +120,9 @@ require_once(ROOT_PATH .'Controllers/ContactController.php');
       <td><p><?php  echo $value['tel'];  ?></p></td>
       <td><p><?php  echo $value['email'];  ?></p></td>
       <td><p><?php  echo nl2br($value['body']);  ?></p></td>
-      <td><a href="edit.php?message_id=<?php echo $value['id']; ?>" name="edit">編集</a></td>
-      <td><a href="delete.php?message_id=<?php echo $value['id']; ?>" onclick="return confirm('本当に削除しますか？')" name="delete">削除</a></td>
+      <td><a href="edit.php?edit_id=<?php echo $value['id']; ?>" name="edit">編集</a></td>
+      <td><input type="submit" name="delete" value="削除" onclick="return confirm('本当に削除しますか？')">
+          <input type="hidden" name="delete" value="<?php echo $value['id']; ?>"></td>
       </tr>
       <?php } ?>
       <?php } ?>

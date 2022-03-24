@@ -241,7 +241,7 @@
     box-shadow: 0 3px 0 #01a001;
     background: #02be02;
   }
-  a[name="delete"] {
+  input[name="delete"] {
     margin-top: 10px;
     padding: 5px 20px;
     font-size: 100%;
